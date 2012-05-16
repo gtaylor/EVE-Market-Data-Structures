@@ -1,0 +1,3 @@
+nose
+python-dateutil<2.0
+pytz
