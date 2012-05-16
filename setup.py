@@ -12,6 +12,8 @@ required = [
 
 packages = [
     'emds',
+    'emds.serialization',
+    'emds.serialization.unified',
 ]
 
 scripts = [
