@@ -5,8 +5,8 @@ import logging
 import datetime
 import json
 from emds.data_structures import MarketHistoryList, MarketHistoryEntry
-from emds.serialization.common_utils import parse_datetime
-from emds.serialization.unified.unified_utils import _columns_to_kwargs, gen_iso_datetime_str
+from emds.formats.common_utils import parse_datetime
+from emds.formats.unified.unified_utils import _columns_to_kwargs, gen_iso_datetime_str
 
 logger = logging.getLogger(__name__)
 
@@ -98,8 +98,8 @@ def encode_to_json(history_list):
         ))
 
     json_dict = {
-        'resultType': history_list.result_type,
-        'version': history_list.version,
+        'resultType': 'history',
+        'version': '0.1alpha',
         'uploadKeys': history_list.upload_keys,
         'generator': history_list.history_generator,
         'currentTime': gen_iso_datetime_str(datetime.datetime.utcnow()),

@@ -3,7 +3,7 @@ Utilities that are generally useful across multiple parsers.
 """
 import dateutil.parser
 import pytz
-from emds.serialization.exceptions import ParseError
+from emds.formats.exceptions import ParseError
 
 UTC_TZINFO = pytz.timezone("UTC")
 

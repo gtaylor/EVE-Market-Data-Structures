@@ -3,15 +3,13 @@ Data structures for representing market data.
 """
 import datetime
 from string import Template
+from emds.exceptions import ItemAlreadyPresentError
 
 class MarketOrderList(object):
     """
     A list of MarketOrder objects, with some added features for assisting
     with serializing to the Unified Uploader Interchange format.
     """
-    result_type = "orders"
-    # Unified market data format revision.
-    version = "0.1alpha"
 
     def __init__(self, upload_keys=None, order_generator=None,
                  *args, **kwargs):
@@ -50,19 +48,34 @@ class MarketOrderList(object):
 
         self._orders[key].append(order)
 
+    def set_item_missing_in_region(self, region_id, type_id,
+                                   error_if_orders_present=True):
+        """
+        Sets an item as missing in a region, meaning there are no buy
+        or sell regions in the region.
+
+        :param int region_id: The region ID.
+        :param int type_id: The item's type ID.
+        :keyword bool error_if_orders_present: If True, raise an exception if
+            an order already exists for this item+region combo when this is
+            called. This failsafe may be disabled by passing False here.
+        """
+        key = '%s_%s' % (region_id, type_id)
+        if error_if_orders_present and self._orders.has_key(key):
+            raise ItemAlreadyPresentError(
+                "Orders already exist for the given region and type ID. "
+                "Pass error_if_orders_present=False to disable this failsafe, "
+                "if desired."
+            )
+
+        self._orders[key] = []
+
     def __repr__(self):
         """
         Basic string representation of the order.
         """
-        template = Template(
-            "<MarketOrderList: \n"
-            " upload_keys: $upload_keys\n"
-            " order_generator: $order_generator\n"
-        )
-        list_repr = template.substitute(
-            upload_keys = self.upload_keys,
-            order_generator = self.order_generator,
-        )
+        list_repr = "<MarketOrderList: \n"
+
         for order_list in self._orders.values():
             for order in order_list:
                 list_repr += repr(order)
@@ -165,9 +178,6 @@ class MarketHistoryList(object):
     """
     A class for storing market order history for serialization.
     """
-    result_type = "history"
-    # Unified market data format revision.
-    version = "0.1alpha"
 
     def __init__(self, upload_keys=None, history_generator=None,
                  *args, **kwargs):
@@ -196,15 +206,8 @@ class MarketHistoryList(object):
         """
         Basic string representation of the history.
         """
-        template = Template(
-            "<MarketHistoryList: \n"
-            " upload_keys: $upload_keys\n"
-            " order_generator: $order_generator\n"
-        )
-        list_repr = template.substitute(
-            upload_keys = self.upload_keys,
-            order_generator = self.history_generator,
-        )
+        list_repr = "<MarketHistoryList: \n"
+
         for history_entry_list in self._history.values():
             for entry in history_entry_list:
                 list_repr += repr(entry)

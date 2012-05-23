@@ -1,6 +1,7 @@
 import json
 from emds.data_structures import MarketHistoryList, MarketOrderList
-from emds.serialization.unified import history, orders
+from emds.formats.exceptions import ParseError
+from emds.formats.unified import history, orders
 
 def parse_from_json(json_str):
     """
@@ -14,7 +15,7 @@ def parse_from_json(json_str):
     try:
         message_dict = json.loads(json_str)
     except ValueError:
-        raise MalformedUploadError("Mal-formed JSON input.")
+        raise ParseError("Mal-formed JSON input.")
 
     upload_type = message_dict['resultType']
 
@@ -24,12 +25,12 @@ def parse_from_json(json_str):
         elif upload_type == 'history':
             return history.parse_from_dict(message_dict)
         else:
-            raise MalformedUploadError(
+            raise ParseError(
                 'Unified message has unknown upload_type: %s' % upload_type)
     except TypeError as exc:
         # MarketOrder and HistoryEntry both raise TypeError exceptions if
         # invalid input is encountered.
-        raise MalformedUploadError(exc.message)
+        raise ParseError(exc.message)
 
 def encode_to_json(order_or_history):
     """

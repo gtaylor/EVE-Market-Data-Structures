@@ -1,7 +1,7 @@
 import unittest
 import datetime
 from emds.data_structures import MarketOrder, MarketOrderList, MarketHistoryList, MarketHistoryEntry
-from emds.serialization import unified
+from emds.formats import unified
 
 class BaseSerializationCase(unittest.TestCase):
 

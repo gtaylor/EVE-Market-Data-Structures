@@ -4,8 +4,8 @@ Parser for the Unified uploader format orders.
 import logging
 import datetime
 import json
-from emds.serialization.common_utils import parse_datetime
-from emds.serialization.unified.unified_utils import _columns_to_kwargs, gen_iso_datetime_str
+from emds.formats.common_utils import parse_datetime
+from emds.formats.unified.unified_utils import _columns_to_kwargs, gen_iso_datetime_str
 from emds.data_structures import MarketOrder, MarketOrderList
 
 logger = logging.getLogger(__name__)
@@ -109,8 +109,8 @@ def encode_to_json(order_list):
         ))
 
     json_dict = {
-        'resultType': order_list.result_type,
-        'version': order_list.version,
+        'resultType': 'orders',
+        'version': '0.1alpha',
         'uploadKeys': order_list.upload_keys,
         'generator': order_list.order_generator,
         'currentTime': gen_iso_datetime_str(datetime.datetime.utcnow()),

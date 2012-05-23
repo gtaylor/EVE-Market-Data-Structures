@@ -2,7 +2,7 @@
 Assorted utility functions for order and history serializing and
 de-serializing.
 """
-from emds.serialization.common_utils import UTC_TZINFO
+from emds.formats.common_utils import UTC_TZINFO
 
 def _columns_to_kwargs(conversion_table, columns, row):
     """
