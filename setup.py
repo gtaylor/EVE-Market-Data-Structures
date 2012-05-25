@@ -1,7 +1,14 @@
 try:
-    from setuptools import setup
+    from setuptools import setup, find_packages
 except ImportError:
     from distutils.core import setup
+
+    def find_packages(exclude=None):
+        """
+        Just stub this. If you're packaging EMDS, you need setuptools. If
+        you're installing, not so much.
+        """
+        return
 
 import emds
 
@@ -10,24 +17,18 @@ required = [
     'pytz',
 ]
 
-packages = [
-    'emds',
-    'emds.serialization',
-    'emds.serialization.unified',
-]
-
 scripts = [
 ]
 
 setup(
     name='emds',
     version=emds.__version__,
-    description='EVE Market Data Relay',
+    description='EVE Market Data Structures',
     long_description=open('README.rst').read(),
     author='Greg Taylor',
     author_email='gtaylor@gc-taylor.com',
     url='https://github.com/gtaylor/EVE-Market-Data-Structures',
-    packages=packages,
+    packages=find_packages(exclude=["tests"]),
     scripts=scripts,
     package_data={'': ['LICENSE']},
     include_package_data=True,

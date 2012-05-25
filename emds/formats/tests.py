@@ -1,9 +1,12 @@
 import unittest
 import datetime
 from emds.data_structures import MarketOrder, MarketOrderList, MarketHistoryList, MarketHistoryEntry
-from emds.formats import unified
 
 class BaseSerializationCase(unittest.TestCase):
+    """
+    This is a base class that provides some convenient test data for the
+    various formats to use in their respective unit tests.
+    """
 
     def setUp(self):
         self.order_list = MarketOrderList()
@@ -24,6 +27,7 @@ class BaseSerializationCase(unittest.TestCase):
             generated_at=datetime.datetime.utcnow()
         )
         self.order_list.add_order(self.order1)
+        # This order isn't added, but it's here for the test to add.
         self.order2 = MarketOrder(
             order_id=1234566,
             is_bid=False,
@@ -40,7 +44,6 @@ class BaseSerializationCase(unittest.TestCase):
             order_range=5,
             generated_at=datetime.datetime.utcnow()
         )
-        self.order_list.add_order(self.order2)
 
         self.history = MarketHistoryList()
         self.history1 = MarketHistoryEntry(
@@ -55,6 +58,7 @@ class BaseSerializationCase(unittest.TestCase):
             generated_at=datetime.datetime.utcnow(),
         )
         self.history.add_entry(self.history1)
+        # This order isn't added, but it's here for the test to add.
         self.history2 = MarketHistoryEntry(
             type_id=1413387203,
             region_id=10000067,
@@ -66,57 +70,3 @@ class BaseSerializationCase(unittest.TestCase):
             total_quantity=2000,
             generated_at=datetime.datetime.utcnow(),
         )
-        self.history.add_entry(self.history2)
-
-class UnifiedSerializationTests(BaseSerializationCase):
-    """
-    Tests for serializing and de-serializing orders in Unified format.
-    """
-
-    def test_order_serialization(self):
-        # Encode the sample order list.
-        encoded_orderlist = unified.encode_to_json(self.order_list)
-        # Should return a string JSON representation.
-        self.assertIsInstance(encoded_orderlist, basestring)
-        # De-code the JSON to instantiate a list of MarketOrder instances that
-        # should be identical to self.orderlist.
-        decoded_list = unified.parse_from_json(encoded_orderlist)
-        self.assertIsInstance(decoded_list, MarketOrderList)
-        re_encoded_list = unified.encode_to_json(decoded_list)
-        # Re-encode the decoded orderlist. Match the two encoded strings. They
-        # should still be the same.
-        print "ORIG"
-        print encoded_orderlist
-        print "OTHER"
-        print re_encoded_list
-        self.assertEqual(
-            encoded_orderlist,
-            re_encoded_list,
-            "Encoded and re-encoded orders don't match."
-        )
-
-    def test_history_serialization(self):
-        # Encode the sample history instance.
-        encoded_history = unified.encode_to_json(self.history)
-        # Should return a string JSON representation.
-        self.assertIsInstance(encoded_history, basestring)
-        # De-code the JSON to instantiate a MarketHistoryList instances that
-        # should be identical to self.orderlist.
-        decoded_list = unified.parse_from_json(encoded_history)
-        self.assertIsInstance(decoded_list, MarketHistoryList)
-        re_encoded_history = unified.encode_to_json(decoded_list)
-        # Re-encode the decoded history. Match the two encoded strings. They
-        # should still be the same.
-        self.assertEqual(
-            encoded_history,
-            re_encoded_history,
-            "Encoded and re-encoded history don't match."
-        )
-
-class EveMarketeerSerializationTests(BaseSerializationCase):
-    """
-    Tests for serializing and de-serializing orders in EVE Marketeer format.
-    """
-
-    def test_serialization(self):
-        pass

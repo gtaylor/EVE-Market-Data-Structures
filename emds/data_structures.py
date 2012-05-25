@@ -44,18 +44,24 @@ class MarketOrderList(object):
         # This key is used to group the orders based on region.
         key = '%s_%s' % (order.region_id, order.type_id)
         if not self._orders.has_key(key):
-            self._orders[key] = []
+            self._orders[key] = MarketItemsInRegionList(
+                order.region_id, order.type_id, order.generated_at)
 
-        self._orders[key].append(order)
+        self._orders[key].add_order(order)
 
-    def set_item_missing_in_region(self, region_id, type_id,
-                                   error_if_orders_present=True):
+    def set_empty_region(self, region_id, type_id, generated_at,
+                         error_if_orders_present=True):
         """
-        Sets an item as missing in a region, meaning there are no buy
-        or sell regions in the region.
+        Prepares for the given region+item combo by instantiating a
+        :py:class:`MarketItemsInRegionList` instance, which will track
+        region ID, type ID, and generated time. This is mostly used for
+        the JSON deserialization process in case there are no orders for
+        the given region+item combo.
 
         :param int region_id: The region ID.
         :param int type_id: The item's type ID.
+        :param datetime.datetime generated_at: The time that the order set
+            was generated.
         :keyword bool error_if_orders_present: If True, raise an exception if
             an order already exists for this item+region combo when this is
             called. This failsafe may be disabled by passing False here.
@@ -68,7 +74,8 @@ class MarketOrderList(object):
                 "if desired."
             )
 
-        self._orders[key] = []
+        self._orders[key] = MarketItemsInRegionList(
+            region_id, type_id, generated_at)
 
     def __repr__(self):
         """
@@ -76,11 +83,46 @@ class MarketOrderList(object):
         """
         list_repr = "<MarketOrderList: \n"
 
-        for order_list in self._orders.values():
+        for order_list in [olist.orders for olist in self._orders.values()]:
             for order in order_list:
                 list_repr += repr(order)
 
         return list_repr
+
+
+class MarketItemsInRegionList(object):
+    """
+    This is an intermediary container that stores MarketOrders for a particular
+    item+region combo. The primary reason it exists is to store generation
+    times for item+region combos that lack orders, since we can't just yank
+    from the first order's time in that case.
+
+    :attr orders: A list of MarketOrder objects.
+    """
+
+    def __init__(self, region_id, type_id, generated_at):
+        """
+        :param int region_id: The region ID that the data set pertains to.
+        :param int type_id: The type ID of the item contained in the order set.
+        :param datetime.datetime generated_at: When the data set was first
+            generated.
+        """
+        # This can be a None or an int.
+        self.region_id = int(region_id) if region_id else None
+        self.type_id = int(type_id)
+        if not isinstance(generated_at, datetime.datetime):
+            raise TypeError('generated_at should be a datetime.')
+        self.generated_at = generated_at
+        self.orders = []
+
+    def add_order(self, order):
+        """
+        Adds a :py:class:`MarketOrder` instance to this region+item list.
+
+        :param MarketOrder order: The order to add.
+        """
+        self.orders.append(order)
+
 
 class MarketOrder(object):
     """

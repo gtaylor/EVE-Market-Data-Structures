@@ -56,6 +56,7 @@ def parse_from_dict(json_dict):
         generated_at = parse_datetime(rowset['generatedAt'])
         region_id = rowset['regionID']
         type_id = rowset['typeID']
+        order_list.set_empty_region(region_id, type_id, generated_at)
 
         for row in rowset['rows']:
             order_kwargs = _columns_to_kwargs(
@@ -80,9 +81,13 @@ def encode_to_json(order_list):
     :rtype: str
     """
     rowsets = []
-    for key, orders in order_list._orders.items():
+    for items_in_region_list in order_list._orders.values():
+        region_id = items_in_region_list.region_id
+        type_id = items_in_region_list.type_id
+        generated_at = gen_iso_datetime_str(items_in_region_list.generated_at)
+
         rows = []
-        for order in orders:
+        for order in items_in_region_list.orders:
             issue_date = gen_iso_datetime_str(order.order_issue_date)
 
             # The order in which these values are added is crucial. It must
@@ -102,9 +107,9 @@ def encode_to_json(order_list):
             ])
 
         rowsets.append(dict(
-            generatedAt = gen_iso_datetime_str(orders[0].generated_at),
-            regionID = orders[0].region_id,
-            typeID = orders[0].type_id,
+            generatedAt = generated_at,
+            regionID = region_id,
+            typeID = type_id,
             rows = rows,
         ))
 
