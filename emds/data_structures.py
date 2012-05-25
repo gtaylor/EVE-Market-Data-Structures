@@ -44,9 +44,17 @@ class MarketOrderList(object):
         # This key is used to group the orders based on region.
         key = '%s_%s' % (order.region_id, order.type_id)
         if not self._orders.has_key(key):
-            self._orders[key] = MarketItemsInRegionList(
-                order.region_id, order.type_id, order.generated_at)
+            # We don't have any orders for this yet. Prep the region+item
+            # combo by instantiating a new MarketItemsInRegionList for
+            # the MarketOrders.
+            self.set_empty_region(
+                order.region_id,
+                order.type_id,
+                order.generated_at
+            )
 
+        # The MarketOrder gets stuffed into the MarketItemsInRegionList for this
+        # item+region combo.
         self._orders[key].add_order(order)
 
     def set_empty_region(self, region_id, type_id, generated_at,
