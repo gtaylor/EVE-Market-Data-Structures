@@ -85,6 +85,19 @@ class MarketOrderList(object):
         self._orders[key] = MarketItemsInRegionList(
             region_id, type_id, generated_at)
 
+    def get_all_orders(self):
+        """
+        Uses a generator to return all orders within.
+
+        .. note:: This is a generator!
+
+        :rtype: generator
+        :returns: Generates a list of :py:class:`MarketOrder` instances.
+        """
+        for olist in self._orders.values():
+            for order in olist.orders:
+                yield order
+
     def __repr__(self):
         """
         Basic string representation of the order.
@@ -279,6 +292,19 @@ class MarketHistoryList(object):
             self._history[key] = []
 
         self._history[key].append(entry)
+
+    def get_all_entries(self):
+        """
+        Uses a generator to return all history entries within.
+
+        .. note:: This is a generator!
+
+        :rtype: generator
+        :returns: Generates a list of :py:class:`MarketHistoryEntry` instances.
+        """
+        for entry_list in self._history.values():
+            for entry in entry_list:
+                yield entry
 
 
 class MarketHistoryEntry(object):
