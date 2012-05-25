@@ -171,5 +171,5 @@ class UnifiedSerializationTests(BaseSerializationCase):
         """
         decoded_list = unified.parse_from_json(data)
         self.assertIsInstance(decoded_list, MarketHistoryList)
-        all_history = [entry for entry in decoded_list.get_all_entries()]
+        all_history = [entry for entry in decoded_list.get_all_history_entries()]
         self.assertEqual(len(all_history), 2)

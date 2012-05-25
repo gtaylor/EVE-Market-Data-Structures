@@ -9,7 +9,11 @@ class MarketOrderList(object):
     """
     A list of MarketOrder objects, with some added features for assisting
     with serializing to the Unified Uploader Interchange format.
+
+    :attr list_type: This may be used in your logic to separate orders from history.
     """
+
+    list_type = "orders"
 
     def __init__(self, upload_keys=None, order_generator=None,
                  *args, **kwargs):
@@ -149,6 +153,7 @@ class MarketOrder(object):
     """
     Represents a market buy or sell order.
     """
+
     def __init__(self, order_id, is_bid, region_id, solar_system_id,
                  station_id, type_id, price, volume_entered, volume_remaining,
                  minimum_volume, order_issue_date, order_duration, order_range,
@@ -240,7 +245,11 @@ class MarketOrder(object):
 class MarketHistoryList(object):
     """
     A class for storing market order history for serialization.
+
+    :attr list_type: This may be used in your logic to separate orders from history.
     """
+
+    list_type = "history"
 
     def __init__(self, upload_keys=None, history_generator=None,
                  *args, **kwargs):
@@ -293,7 +302,7 @@ class MarketHistoryList(object):
 
         self._history[key].append(entry)
 
-    def get_all_entries(self):
+    def get_all_history_entries(self):
         """
         Uses a generator to return all history entries within.
 
@@ -311,6 +320,7 @@ class MarketHistoryEntry(object):
     """
     Represents a single point of market history data.
     """
+
     def __init__(self, type_id, region_id, historical_date, num_orders,
                  low_price, high_price, average_price, total_quantity,
                  generated_at):
