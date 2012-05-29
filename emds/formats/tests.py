@@ -1,3 +1,8 @@
+"""
+Base classes and unit tests for general formats-related modules. Look within
+the submodules for each format for their own respective serialization and
+deserialization tests.
+"""
 import unittest
 import datetime
 from emds.data_structures import MarketOrder, MarketOrderList, MarketHistoryList, MarketHistoryEntry

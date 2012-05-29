@@ -37,6 +37,16 @@ class MarketOrderList(object):
             if not isinstance(order_generator, dict):
                 raise TypeError('order_generator must be a dict.')
 
+    def __len__(self):
+        """
+        Implements a somewhat inefficient length tracking method. Returns the
+        total number of orders contained within.
+        """
+        total = 0
+        for orders in self._orders.values():
+            total += len(orders)
+        return total
+
     def add_order(self, order):
         """
         Adds a MarketOrder instance to the list of market orders contained
@@ -139,6 +149,9 @@ class MarketItemsInRegionList(object):
             raise TypeError('generated_at should be a datetime.')
         self.generated_at = generated_at
         self.orders = []
+
+    def __len__(self):
+        return len(self.orders)
 
     def add_order(self, order):
         """
