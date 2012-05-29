@@ -125,13 +125,12 @@ class UnifiedSerializationTests(BaseSerializationCase):
         self.assertIsInstance(decoded_list, MarketOrderList)
         # There should be two item+region combos.
         self.assertEqual(len(decoded_list._orders.keys()), 2)
-        # Now get a full list of orders and make sure there are three.
-        all_orders = [order for order in decoded_list.get_all_orders()]
-        self.assertEqual(len(all_orders), 3)
+        # Now make sure there are three.
+        self.assertEqual(len(decoded_list), 3)
         # These are regionID_itemID. Make sure the keys are set correctly.
         self.assertItemsEqual(
             ['10000065_11134', '10000066_11135'],
-                                                decoded_list._orders.keys()
+            decoded_list._orders.keys()
         )
 
         # Re-encode for JSON and do some basic checks for sanity.
@@ -173,5 +172,4 @@ class UnifiedSerializationTests(BaseSerializationCase):
         """
         decoded_list = unified.parse_from_json(data)
         self.assertIsInstance(decoded_list, MarketHistoryList)
-        all_history = [entry for entry in decoded_list.get_all_history_entries()]
-        self.assertEqual(len(all_history), 2)
+        self.assertEqual(len(decoded_list), 2)

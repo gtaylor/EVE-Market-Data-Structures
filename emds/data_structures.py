@@ -37,6 +37,31 @@ class MarketOrderList(object):
             if not isinstance(order_generator, dict):
                 raise TypeError('order_generator must be a dict.')
 
+    def __iter__(self):
+        """
+        Uses a generator to return all orders within.
+
+        .. note:: This is a generator!
+
+        :rtype: generator
+        :returns: Generates a list of :py:class:`MarketOrder` instances.
+        """
+        for olist in self._orders.values():
+            for order in olist.orders:
+                yield order
+
+    def __repr__(self):
+        """
+        Basic string representation of the order.
+        """
+        list_repr = "<MarketOrderList: \n"
+
+        for order_list in [olist.orders for olist in self._orders.values()]:
+            for order in order_list:
+                list_repr += repr(order)
+
+        return list_repr
+
     def __len__(self):
         """
         Implements a somewhat inefficient length tracking method. Returns the
@@ -98,31 +123,6 @@ class MarketOrderList(object):
 
         self._orders[key] = MarketItemsInRegionList(
             region_id, type_id, generated_at)
-
-    def get_all_orders(self):
-        """
-        Uses a generator to return all orders within.
-
-        .. note:: This is a generator!
-
-        :rtype: generator
-        :returns: Generates a list of :py:class:`MarketOrder` instances.
-        """
-        for olist in self._orders.values():
-            for order in olist.orders:
-                yield order
-
-    def __repr__(self):
-        """
-        Basic string representation of the order.
-        """
-        list_repr = "<MarketOrderList: \n"
-
-        for order_list in [olist.orders for olist in self._orders.values()]:
-            for order in order_list:
-                list_repr += repr(order)
-
-        return list_repr
 
 
 class MarketItemsInRegionList(object):
@@ -297,6 +297,19 @@ class MarketHistoryList(object):
             total += len(orders)
         return total
 
+    def __iter__(self):
+        """
+        Uses a generator to return all history entries within.
+
+        .. note:: This is a generator!
+
+        :rtype: generator
+        :returns: Generates a list of :py:class:`MarketHistoryEntry` instances.
+        """
+        for entry_list in self._history.values():
+            for entry in entry_list:
+                yield entry
+
     def __repr__(self):
         """
         Basic string representation of the history.
@@ -324,19 +337,6 @@ class MarketHistoryList(object):
             self._history[key] = []
 
         self._history[key].append(entry)
-
-    def get_all_history_entries(self):
-        """
-        Uses a generator to return all history entries within.
-
-        .. note:: This is a generator!
-
-        :rtype: generator
-        :returns: Generates a list of :py:class:`MarketHistoryEntry` instances.
-        """
-        for entry_list in self._history.values():
-            for entry in entry_list:
-                yield entry
 
 
 class MarketHistoryEntry(object):

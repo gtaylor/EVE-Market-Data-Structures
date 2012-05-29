@@ -9,7 +9,7 @@ class MarketOrderListTestCase(unittest.TestCase):
 
     def test_order_counting(self):
         """
-        Test the various counting order counting methods.
+        Test the various order counting methods.
         """
         order_list = MarketOrderList()
         # There should be no orders so far.
@@ -72,6 +72,9 @@ class MarketOrderListTestCase(unittest.TestCase):
 class MarketHistoryListTestCase(unittest.TestCase):
 
     def test_entry_counting(self):
+        """
+        Test the various history counting counting methods.
+        """
         history_list = MarketHistoryList()
         # There are no history entries yet.
         self.assertEqual(0, len(history_list))

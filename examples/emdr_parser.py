@@ -37,13 +37,13 @@ while True:
         # This is a market order message.
         print "* Recieved Orders from: %s" % market_list.order_generator
 
-        for order in market_list.get_all_orders():
+        for order in market_list:
             # You can mess with the MarketOrder in here.
             pass
     else:
         # This is a history message.
         print "* Received History from: %s" % market_list.history_generator
 
-        for history in market_list.get_all_history_entries():
+        for history in market_list:
             # You can mess with the MarketHistoryEntry in here.
             pass
