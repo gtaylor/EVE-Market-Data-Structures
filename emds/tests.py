@@ -5,11 +5,11 @@ import unittest
 import datetime
 from emds.data_structures import MarketOrder, MarketOrderList, MarketHistoryList, MarketHistoryEntry
 
-class MarketOrderTestCase(unittest.TestCase):
+class MarketOrderListTestCase(unittest.TestCase):
 
     def test_order_counting(self):
         """
-        Test the various counting order couting methods.
+        Test the various counting order counting methods.
         """
         order_list = MarketOrderList()
         # There should be no orders so far.
@@ -68,3 +68,50 @@ class MarketOrderTestCase(unittest.TestCase):
             generated_at=datetime.datetime.utcnow()
         ))
         self.assertEqual(3, len(order_list))
+
+class MarketHistoryListTestCase(unittest.TestCase):
+
+    def test_entry_counting(self):
+        history_list = MarketHistoryList()
+        # There are no history entries yet.
+        self.assertEqual(0, len(history_list))
+        history_list.add_entry(MarketHistoryEntry(
+            type_id=2413387906,
+            region_id=10000068,
+            historical_date=datetime.datetime.utcnow(),
+            num_orders=5,
+            low_price=5.0,
+            high_price=10.5,
+            average_price=7.0,
+            total_quantity=200,
+            generated_at=datetime.datetime.utcnow(),
+        ))
+        # Just added one.
+        self.assertEqual(1, len(history_list))
+        # Adding another item type in the same region.
+        history_list.add_entry(MarketHistoryEntry(
+            type_id=2413387905,
+            region_id=10000068,
+            historical_date=datetime.datetime.utcnow(),
+            num_orders=5,
+            low_price=5.0,
+            high_price=10.5,
+            average_price=7.0,
+            total_quantity=200,
+            generated_at=datetime.datetime.utcnow(),
+        ))
+        self.assertEqual(2, len(history_list))
+        # Adding to another region.
+        history_list.add_entry(MarketHistoryEntry(
+            type_id=2413387905,
+            region_id=10000067,
+            historical_date=datetime.datetime.utcnow(),
+            num_orders=5,
+            low_price=5.0,
+            high_price=10.5,
+            average_price=7.0,
+            total_quantity=200,
+            generated_at=datetime.datetime.utcnow(),
+        ))
+        # There are now three total.
+        self.assertEqual(3, len(history_list))

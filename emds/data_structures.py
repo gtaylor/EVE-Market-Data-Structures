@@ -287,6 +287,16 @@ class MarketHistoryList(object):
             if not isinstance(history_generator, dict):
                 raise TypeError('history_generator must be a dict.')
 
+    def __len__(self):
+        """
+        Implements a somewhat inefficient length tracking method. Returns the
+        total number of orders contained within.
+        """
+        total = 0
+        for orders in self._history.values():
+            total += len(orders)
+        return total
+
     def __repr__(self):
         """
         Basic string representation of the history.
