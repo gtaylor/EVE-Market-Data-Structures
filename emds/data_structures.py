@@ -66,11 +66,35 @@ class MarketOrderList(object):
         """
         Implements a somewhat inefficient length tracking method. Returns the
         total number of orders contained within.
+
+        :rtype: int
+        :returns: The number of orders contained within the list.
         """
         total = 0
         for orders in self._orders.values():
             total += len(orders)
         return total
+
+    def __contains__(self, item):
+        """
+        Used for checking whether an order ID is contained within the order list.
+
+        :param item: The MarketOrder or order ID to look for.
+        :type item: int or MarketOrder
+        :rtype: bool
+        :returns: True if the given order can be found, False if not.
+        """
+        if not isinstance(item, int):
+            order_id = item.order_id
+        else:
+            order_id = item
+
+        for order in self:
+            if order.order_id == order_id:
+                return True
+
+        # No matches.
+        return False
 
     def add_order(self, order):
         """
@@ -151,7 +175,32 @@ class MarketItemsInRegionList(object):
         self.orders = []
 
     def __len__(self):
+        """
+        :rtype: int
+        :returns: The number of orders contained within the region list.
+        """
         return len(self.orders)
+
+    def __contains__(self, item):
+        """
+        Used for checking whether an order ID is contained within the order list.
+
+        :param item: The MarketOrder or order ID to look for.
+        :type item: int or MarketOrder
+        :rtype: bool
+        :returns: True if the given order can be found, False if not.
+        """
+        if not isinstance(item, int):
+            order_id = item.order_id
+        else:
+            order_id = item
+
+        for order in self.orders:
+            if order.order_id == order_id:
+                return True
+
+        # No matches.
+        return False
 
     def add_order(self, order):
         """
@@ -309,6 +358,27 @@ class MarketHistoryList(object):
         for entry_list in self._history.values():
             for entry in entry_list:
                 yield entry
+
+    def __contains__(self, item):
+        """
+        Used for checking whether an type ID is contained within the history list.
+
+        :param item: The MarketHistoryEntry or type ID to look for.
+        :type item: int or MarketHistoryEntry
+        :rtype: bool
+        :returns: True if the given type ID can be found, False if not.
+        """
+        if not isinstance(item, int):
+            type_id = item.type_id
+        else:
+            type_id = item
+
+        for entry in self:
+            if entry.type_id == type_id:
+                return True
+
+        # No matches.
+        return False
 
     def __repr__(self):
         """
