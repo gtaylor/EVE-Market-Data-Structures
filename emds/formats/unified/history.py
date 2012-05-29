@@ -3,7 +3,7 @@ Parser for the Unified uploader format market history.
 """
 import logging
 import datetime
-import json
+from emds.compat import json
 from emds.data_structures import MarketHistoryList, MarketHistoryEntry
 from emds.formats.common_utils import parse_datetime
 from emds.formats.unified.unified_utils import _columns_to_kwargs, gen_iso_datetime_str

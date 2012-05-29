@@ -1,4 +1,4 @@
-import json
+from emds.compat import json
 from emds.data_structures import MarketHistoryList, MarketOrderList
 from emds.formats.exceptions import ParseError
 from emds.formats.unified import history, orders

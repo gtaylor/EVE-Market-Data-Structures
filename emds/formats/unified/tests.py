@@ -136,10 +136,12 @@ class UnifiedSerializationTests(BaseSerializationCase):
 
         # Re-encode for JSON and do some basic checks for sanity.
         re_encoded_list = unified.encode_to_json(decoded_list)
-        # This should be the non-empty region.
-        self.assertTrue('"rows": [[' in re_encoded_list)
+        # This should be the non-empty region. We have the two different
+        # conditions because ujson strips spaces, whereas simplejson doesn't
+        # by default.
+        self.assertTrue('"rows": [[' in re_encoded_list or '"rows":[[' in re_encoded_list)
         # This should be our empty region.
-        self.assertTrue('"rows": []' in re_encoded_list)
+        self.assertTrue('"rows": []' in re_encoded_list or '"rows":[]' in re_encoded_list)
 
     def test_simple_history_deserialization(self):
         """
