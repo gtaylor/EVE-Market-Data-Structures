@@ -1,0 +1,22 @@
+.. _GitHub project: https://github.com/gtaylor/EVE-Market-Data-Structures
+.. _issue tracker: https://github.com/gtaylor/EVE-Market-Data-Structures/issues
+.. _mailing list: https://groups.google.com/forum/#!forum/eve-emdr
+
+.. _EMDR: http://www.eve-emdr.com/
+.. _Unified Uploader Interchange Format: http://dev.eve-central.com/unifieduploader/start
+
+.. _Python: http://python.org
+.. _nose: http://somethingaboutorange.com/mrl/projects/nose/
+
+.. _virtualenv: http://pypi.python.org/pypi/virtualenv
+.. _virtualenvwrapper: http://www.doughellmann.com/projects/virtualenvwrapper/
+.. _ZeroMQ: http://www.zeromq.org/
+.. _gevent: http://www.gevent.org/
+.. _bottle: http://bottlepy.org/docs/dev/
+
+.. _git: http://git-scm.com/
+.. _Supervisor: http://supervisord.org/
+
+.. _GitHub: https://github.com/
+
+.. _BSD License: http://opensource.org/licenses/bsd-license.php
