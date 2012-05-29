@@ -84,10 +84,10 @@ class MarketOrderList(object):
         :rtype: bool
         :returns: True if the given order can be found, False if not.
         """
-        if not isinstance(item, int):
+        if isinstance(item, MarketOrder):
             order_id = item.order_id
         else:
-            order_id = item
+            order_id = int(item)
 
         for order in self:
             if order.order_id == order_id:
@@ -190,10 +190,10 @@ class MarketItemsInRegionList(object):
         :rtype: bool
         :returns: True if the given order can be found, False if not.
         """
-        if not isinstance(item, int):
+        if isinstance(item, MarketOrder):
             order_id = item.order_id
         else:
-            order_id = item
+            order_id = int(item)
 
         for order in self.orders:
             if order.order_id == order_id:
@@ -368,10 +368,10 @@ class MarketHistoryList(object):
         :rtype: bool
         :returns: True if the given type ID can be found, False if not.
         """
-        if not isinstance(item, int):
+        if isinstance(item, MarketHistoryEntry):
             type_id = item.type_id
         else:
-            type_id = item
+            type_id = int(item)
 
         for entry in self:
             if entry.type_id == type_id:
