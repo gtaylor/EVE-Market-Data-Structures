@@ -1,6 +1,8 @@
 EVE Market Data Structures
 ==========================
 
+.. image:: https://secure.travis-ci.org/gtaylor/EVE-Market-Data-Structures.png
+
 :Author: Greg Taylor
 :License: BSD
 
