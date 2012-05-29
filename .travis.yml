@@ -1,6 +1,5 @@
 language: python
 python:
-  - 2.6
   - 2.7
 # command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
 install:
@@ -8,3 +7,5 @@ install:
   - pip install -r requirements.txt --use-mirrors
 # command to run tests, e.g. python setup.py test
 script:  nosetests
+notifications:
+  irc: "frozen.coldfront.net#emdr"
