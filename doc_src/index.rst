@@ -26,6 +26,8 @@ Documentation
    :maxdepth: 2
 
    installation
+   market_orders
+   data_structures
 
 Indices and tables
 ------------------

@@ -1,13 +1,10 @@
 .. _installation:
 
-Requirements
+Installation
 ============
 
 The only hard requirement for using EMDS is Python 2.6, though, Python 2.7
 is strongly recommended. PyPy should also work just fine.
-
-Installation
-============
 
 To install EMDS, you may use ``pip``::
 
@@ -18,7 +15,7 @@ or ``easy_install``::
     easy_install emds
 
 JSON modules
-============
+------------
 
 EMDS can run with any of the following JSON modules:
 
