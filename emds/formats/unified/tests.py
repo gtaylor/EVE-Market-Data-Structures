@@ -1,3 +1,4 @@
+from emds.compat import json
 from emds.data_structures import MarketOrderList, MarketHistoryList
 from emds.formats import unified
 from emds.formats.tests import BaseSerializationCase
@@ -135,12 +136,23 @@ class UnifiedSerializationTests(BaseSerializationCase):
 
         # Re-encode for JSON and do some basic checks for sanity.
         re_encoded_list = unified.encode_to_json(decoded_list)
-        # This should be the non-empty region. We have the two different
-        # conditions because ujson strips spaces, whereas simplejson doesn't
-        # by default.
-        self.assertTrue('"rows": [[' in re_encoded_list or '"rows":[[' in re_encoded_list)
-        # This should be our empty region.
-        self.assertTrue('"rows": []' in re_encoded_list or '"rows":[]' in re_encoded_list)
+        # We're back to a dict. Check to make sure our custom JSON encoder
+        # didn't butcher the entry-less region (10000066).
+        re_decoded_list = json.loads(re_encoded_list)
+        self.assertEqual(2, len(re_decoded_list['rowsets']))
+
+        for rowset in re_decoded_list['rowsets']:
+            # We only want to check the entry rowset with type 11135.
+            if rowset['typeID'] != 11135:
+                continue
+
+            # There should always be one rowset, even if it ends up being empty.
+            first_rowset = re_decoded_list['rowsets'][0]
+            # Check for the empty rowsets with all data intact.
+            self.assertListEqual(rowset['rows'], [])
+            self.assertTrue(first_rowset.has_key('generatedAt'))
+            self.assertTrue(first_rowset.has_key('regionID'))
+            self.assertTrue(first_rowset.has_key('typeID'))
 
     def test_simple_history_deserialization(self):
         """
@@ -173,3 +185,41 @@ class UnifiedSerializationTests(BaseSerializationCase):
         decoded_list = unified.parse_from_json(data)
         self.assertIsInstance(decoded_list, MarketHistoryList)
         self.assertEqual(len(decoded_list), 2)
+
+    def test_empty_history_reencoding(self):
+        """
+        Uses a repeated encoding-decoding cycle to determine whether we're
+        handling empty rows within rowsets correctly.
+        """
+        data = """
+            {
+              "resultType" : "history",
+              "version" : "0.1alpha",
+              "uploadKeys" : [
+                { "name" : "emk", "key" : "abc" },
+                { "name" : "ec" , "key" : "def" }
+              ],
+              "generator" : { "name" : "Yapeal", "version" : "11.335.1737" },
+              "currentTime" : "2011-10-22T15:46:00+00:00",
+              "columns" : ["date","orders","quantity","low","high","average"],
+              "rowsets" : [
+                {
+                  "generatedAt" : "2011-10-22T15:42:00+00:00",
+                  "regionID" : 10000065,
+                  "typeID" : 11134,
+                  "rows" : []
+                }
+              ]
+            }
+        """
+        decoded_list = unified.parse_from_json(data)
+        re_encoded_list = unified.encode_to_json(decoded_list)
+        re_decoded_list = json.loads(re_encoded_list)
+        # There should always be one rowset, even if it ends up being empty.
+        self.assertEqual(1, len(re_decoded_list['rowsets']))
+        first_rowset = re_decoded_list['rowsets'][0]
+        # Check for the empty rowsets with all data intact.
+        self.assertListEqual(first_rowset['rows'], [])
+        self.assertTrue(first_rowset.has_key('generatedAt'))
+        self.assertTrue(first_rowset.has_key('regionID'))
+        self.assertTrue(first_rowset.has_key('typeID'))

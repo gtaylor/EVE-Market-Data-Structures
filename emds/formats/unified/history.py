@@ -40,7 +40,7 @@ def parse_from_dict(json_dict):
     """
     history_columns = json_dict['columns']
 
-    history = MarketHistoryList(
+    history_list = MarketHistoryList(
         upload_keys=json_dict['uploadKeys'],
         history_generator=json_dict['generator'],
     )
@@ -49,6 +49,7 @@ def parse_from_dict(json_dict):
         generated_at = parse_datetime(rowset['generatedAt'])
         region_id = rowset['regionID']
         type_id = rowset['typeID']
+        history_list.set_empty_region(region_id, type_id, generated_at)
 
         for row in rowset['rows']:
             history_kwargs = _columns_to_kwargs(
@@ -62,9 +63,9 @@ def parse_from_dict(json_dict):
                 'generated_at': generated_at,
             })
 
-            history.add_entry(MarketHistoryEntry(**history_kwargs))
+            history_list.add_entry(MarketHistoryEntry(**history_kwargs))
 
-    return history
+    return history_list
 
 def encode_to_json(history_list):
     """
@@ -74,9 +75,13 @@ def encode_to_json(history_list):
     :rtype: str
     """
     rowsets = []
-    for key, history_entries in history_list._history.items():
+    for items_in_region_list in history_list._history.values():
+        region_id = items_in_region_list.region_id
+        type_id = items_in_region_list.type_id
+        generated_at = gen_iso_datetime_str(items_in_region_list.generated_at)
+
         rows = []
-        for entry in history_entries:
+        for entry in items_in_region_list.entries:
             historical_date = gen_iso_datetime_str(entry.historical_date)
 
             # The order in which these values are added is crucial. It must
@@ -91,9 +96,9 @@ def encode_to_json(history_list):
             ])
 
         rowsets.append(dict(
-            generatedAt = gen_iso_datetime_str(history_entries[0].generated_at),
-            regionID = history_entries[0].region_id,
-            typeID = history_entries[0].type_id,
+            generatedAt = generated_at,
+            regionID = region_id,
+            typeID = type_id,
             rows = rows,
         ))
 

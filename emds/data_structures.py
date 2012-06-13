@@ -181,6 +181,18 @@ class MarketItemsInRegionList(object):
         """
         return len(self.orders)
 
+    def __iter__(self):
+        """
+        Uses a generator to return all orders within.
+
+        .. note:: This is a generator!
+
+        :rtype: generator
+        :returns: Generates a list of :py:class:`MarketOrder` instances.
+        """
+        for order in self.orders:
+            yield order
+
     def __contains__(self, item):
         """
         Used for checking whether an order ID is contained within the order list.
@@ -401,12 +413,103 @@ class MarketHistoryList(object):
         :param MarketHistoryEntry entry: The history entry to add to
             instance.
         """
-        # This key is used to group the entries based on region and type.
+        # This key is used to group the orders based on region.
         key = '%s_%s' % (entry.region_id, entry.type_id)
         if not self._history.has_key(key):
-            self._history[key] = []
+            # We don't have any orders for this yet. Prep the region+item
+            # combo by instantiating a new MarketItemsInRegionList for
+            # the MarketOrders.
+            self.set_empty_region(
+                entry.region_id,
+                entry.type_id,
+                entry.generated_at
+            )
 
-        self._history[key].append(entry)
+        # The MarketOrder gets stuffed into the MarketItemsInRegionList for this
+        # item+region combo.
+        self._history[key].add_entry(entry)
+
+    def set_empty_region(self, region_id, type_id, generated_at,
+                         error_if_entries_present=True):
+        """
+        Prepares for the given region+item combo by instantiating a
+        :py:class:`HistoryItemsInRegionList` instance, which will track
+        region ID, type ID, and generated time. This is mostly used for
+        the JSON deserialization process in case there are no orders for
+        the given region+item combo.
+
+        :param int region_id: The region ID.
+        :param int type_id: The item's type ID.
+        :param datetime.datetime generated_at: The time that the order set
+            was generated.
+        :keyword bool error_if_entries_present: If True, raise an exception if
+            an entry already exists for this item+region combo when this is
+            called. This failsafe may be disabled by passing False here.
+        """
+        key = '%s_%s' % (region_id, type_id)
+        if error_if_entries_present and self._history.has_key(key):
+            raise ItemAlreadyPresentError(
+                "Orders already exist for the given region and type ID. "
+                "Pass error_if_orders_present=False to disable this failsafe, "
+                "if desired."
+            )
+
+        self._history[key] = HistoryItemsInRegionList(
+            region_id, type_id, generated_at)
+
+
+class HistoryItemsInRegionList(object):
+    """
+    This is an intermediary container that stores MarketHistoryEntry for a
+    particular item+region combo. The primary reason it exists is to store
+    generation times for item+region combos that lack orders, since we can't
+    just yank from the first order's time in that case.
+
+    :attr orders: A list of MarketHistoryEntry objects.
+    """
+
+    def __init__(self, region_id, type_id, generated_at):
+        """
+        :param int region_id: The region ID that the data set pertains to.
+        :param int type_id: The type ID of the item contained in the order set.
+        :param datetime.datetime generated_at: When the data set was first
+            generated.
+        """
+        # This can be a None or an int.
+        self.region_id = int(region_id) if region_id else None
+        self.type_id = int(type_id)
+        if not isinstance(generated_at, datetime.datetime):
+            raise TypeError('generated_at should be a datetime.')
+        self.generated_at = generated_at
+        self.entries = []
+
+    def __iter__(self):
+        """
+        Uses a generator to return all history entries within.
+
+        .. note:: This is a generator!
+
+        :rtype: generator
+        :returns: Generates a list of :py:class:`MarketHistoryEntry` instances.
+        """
+        for entry in self.entries:
+            yield entry
+
+    def __len__(self):
+        """
+        :rtype: int
+        :returns: The number of entries contained within the region list.
+        """
+        return len(self.entries)
+
+    def add_entry(self, entry):
+        """
+        Adds a :py:class:`MarketHistoryEntry` instance to this region+item list.
+
+        :param MarketHistoryEntry entry: The history entry to add to
+            instance.
+        """
+        self.entries.append(entry)
 
 
 class MarketHistoryEntry(object):
