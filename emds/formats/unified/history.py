@@ -99,7 +99,7 @@ def encode_to_json(history_list):
 
     json_dict = {
         'resultType': 'history',
-        'version': '0.1alpha',
+        'version': '0.1',
         'uploadKeys': history_list.upload_keys,
         'generator': history_list.history_generator,
         'currentTime': gen_iso_datetime_str(datetime.datetime.utcnow()),

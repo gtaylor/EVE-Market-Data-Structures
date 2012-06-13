@@ -115,7 +115,7 @@ def encode_to_json(order_list):
 
     json_dict = {
         'resultType': 'orders',
-        'version': '0.1alpha',
+        'version': '0.1',
         'uploadKeys': order_list.upload_keys,
         'generator': order_list.order_generator,
         'currentTime': gen_iso_datetime_str(datetime.datetime.utcnow()),
