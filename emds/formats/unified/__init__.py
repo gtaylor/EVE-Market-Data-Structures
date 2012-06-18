@@ -17,6 +17,16 @@ def parse_from_json(json_str):
     except ValueError:
         raise ParseError("Mal-formed JSON input.")
 
+    upload_keys = message_dict.get('uploadKeys', False)
+    if upload_keys is False:
+        raise ParseError(
+            "uploadKeys does not exist. At minimum, an empty array is required."
+        )
+    elif not isinstance(upload_keys, list):
+        raise ParseError(
+            "uploadKeys must be an array object."
+        )
+
     upload_type = message_dict['resultType']
 
     try:
