@@ -20,10 +20,7 @@ def parse_datetime(time_str):
     try:
         return dateutil.parser.parse(
             time_str
-        ).replace(
-            tzinfo=UTC_TZINFO,
-            microsecond=0
-        )
+        ).replace(microsecond=0).astimezone(UTC_TZINFO)
     except ValueError:
         # This was some kind of unrecognizable time string.
         raise ParseError("Invalid time string: %s" % time_str)

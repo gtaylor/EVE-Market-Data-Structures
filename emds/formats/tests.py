@@ -6,6 +6,23 @@ deserialization tests.
 import unittest
 import datetime
 from emds.data_structures import MarketOrder, MarketOrderList, MarketHistoryList, MarketHistoryEntry
+from emds.formats.common_utils import parse_datetime, UTC_TZINFO
+
+class CommonUtilsCase(unittest.TestCase):
+    """
+    Tests the stuff in the common_utils module.
+    """
+    def test_datetime_parsing(self):
+        """
+        Run through a few different scenarios with datetime parsing.
+        """
+        pdtime = parse_datetime("2012-06-19T22:41:52+01:00")
+        # dtime string had +1 tz offset. -1 gets us back to UTC. The parser
+        # converts local times to UTC, so make sure this matches up.
+        self.assertEqual(pdtime.hour, 21)
+        # Make sure it converted to UTC.
+        self.assertEqual(pdtime.tzinfo, UTC_TZINFO)
+
 
 class BaseSerializationCase(unittest.TestCase):
     """
