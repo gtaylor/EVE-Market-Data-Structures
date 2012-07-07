@@ -1,7 +1,58 @@
+import datetime
+import pytz
 from emds.compat import json
 from emds.data_structures import MarketOrderList, MarketHistoryList
 from emds.formats import unified
+from emds.formats.common_utils import enlighten_dtime, UTC_TZINFO, parse_datetime
 from emds.formats.tests import BaseSerializationCase
+from emds.formats.unified.unified_utils import gen_iso_datetime_str
+
+class UtilsTests(BaseSerializationCase):
+    """
+    Tests some of the stuff in unified_utils.
+    """
+
+    def test_gen_iso_datetime_str(self):
+        """
+        Make sure gen_iso_datetime_str() is behaving correctly.
+        """
+
+        est = pytz.timezone("EST")
+        some_date = datetime.datetime(
+            year=1985, month=11, day=15,
+            hour=6, minute=0,
+            tzinfo=est)
+
+        # Generate an ISO datetime string, and parse it. This will convert it
+        # from EST to UTC.
+        parsed_dtime = parse_datetime(gen_iso_datetime_str(some_date))
+        # EST is -5, so the hour should now be 11.
+        self.assertEqual(parsed_dtime.hour, 11)
+        # tzinfo will be UTC, since we converted it upon parsing.
+        self.assertIs(parsed_dtime.tzinfo, UTC_TZINFO)
+
+    def test_enlighten_dtime(self):
+        """
+        Makes sure our datetime 'enlightening' is behaving correctly.
+        """
+
+        est = pytz.timezone("EST")
+        aware_dtime = datetime.datetime(
+            year=1985, month=11, day=15,
+            hour=6, minute=0,
+            tzinfo=est)
+
+        enlightened_dtime = enlighten_dtime(aware_dtime)
+        # The tzinfo should be untouched.
+        self.assertIs(aware_dtime.tzinfo, enlightened_dtime.tzinfo)
+
+        # This is a naive object, but has UTC values for hour.
+        utcnow = datetime.datetime.now()
+        # No tzinfo was present, so that is replaced. hour should be the same.
+        enlightened_utcnow = enlighten_dtime(utcnow)
+        self.assertEqual(enlightened_utcnow.hour, utcnow.hour)
+        self.assertIs(enlightened_utcnow.tzinfo, UTC_TZINFO)
+
 
 class UnifiedSerializationTests(BaseSerializationCase):
     """

@@ -4,7 +4,7 @@ Parser for the Unified uploader format orders.
 import logging
 import datetime
 from emds.compat import json
-from emds.formats.common_utils import parse_datetime
+from emds.formats.common_utils import parse_datetime, now_dtime_in_utc
 from emds.formats.unified.unified_utils import _columns_to_kwargs, gen_iso_datetime_str
 from emds.data_structures import MarketOrder, MarketOrderList
 
@@ -118,7 +118,7 @@ def encode_to_json(order_list):
         'version': '0.1',
         'uploadKeys': order_list.upload_keys,
         'generator': order_list.order_generator,
-        'currentTime': gen_iso_datetime_str(datetime.datetime.utcnow()),
+        'currentTime': gen_iso_datetime_str(now_dtime_in_utc()),
         # This must match the order of the values in the row assembling portion
         # above this.
         'columns': STANDARD_ENCODED_COLUMNS,

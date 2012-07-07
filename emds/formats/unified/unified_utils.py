@@ -38,4 +38,4 @@ def gen_iso_datetime_str(dtime):
     :rtype: str
     :returns: An ISO/Unified Uploader formatted datetime string.
     """
-    return dtime.replace(microsecond=0, tzinfo=UTC_TZINFO).isoformat()
+    return dtime.replace(microsecond=0).astimezone(UTC_TZINFO).isoformat()

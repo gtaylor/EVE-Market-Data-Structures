@@ -5,7 +5,7 @@ import logging
 import datetime
 from emds.compat import json
 from emds.data_structures import MarketHistoryList, MarketHistoryEntry
-from emds.formats.common_utils import parse_datetime
+from emds.formats.common_utils import parse_datetime, now_dtime_in_utc
 from emds.formats.unified.unified_utils import _columns_to_kwargs, gen_iso_datetime_str
 
 logger = logging.getLogger(__name__)
@@ -107,7 +107,7 @@ def encode_to_json(history_list):
         'version': '0.1',
         'uploadKeys': history_list.upload_keys,
         'generator': history_list.history_generator,
-        'currentTime': gen_iso_datetime_str(datetime.datetime.utcnow()),
+        'currentTime': gen_iso_datetime_str(now_dtime_in_utc()),
         # This must match the order of the values in the row assembling portion
         # above this.
         'columns': STANDARD_ENCODED_COLUMNS,
