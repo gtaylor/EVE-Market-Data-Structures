@@ -39,16 +39,16 @@ class MarketOrderList(object):
 
     def __iter__(self):
         """
-        Uses a generator to return all orders within.
+        Uses a generator to return all orders within. :py:class:`MarketOrder`
+        objects are yielded directly, instead of being grouped in
+        :py:class:`MarketItemsInRegionList` instances.
 
         .. note:: This is a generator!
 
         :rtype: generator
         :returns: Generates a list of :py:class:`MarketOrder` instances.
         """
-        for olist in self._orders.values():
-            for order in olist.orders:
-                yield order
+        return self.get_all_order_groups()
 
     def __repr__(self):
         """
@@ -89,12 +89,42 @@ class MarketOrderList(object):
         else:
             order_id = int(item)
 
-        for order in self:
+        for order in self.get_all_orders_ungrouped():
             if order.order_id == order_id:
                 return True
 
         # No matches.
         return False
+
+    def get_all_orders_ungrouped(self):
+        """
+        Uses a generator to return all orders within. :py:class:`MarketOrder`
+        objects are yielded directly, instead of being grouped in
+        :py:class:`MarketItemsInRegionList` instances.
+
+        .. note:: This is a generator!
+
+        :rtype: generator
+        :returns: Generates a list of :py:class:`MarketOrder` instances.
+        """
+        for olist in self._orders.values():
+            for order in olist.orders:
+                yield order
+
+    def get_all_order_groups(self):
+        """
+        Uses a generator to return all grouped Item+Region combos, in the form
+        of :py:class:`MarketItemsInRegionList` instances. This is useful in
+        that it is possible to express a lack of an item in a specific region.
+
+        .. note:: This is a generator!
+
+        :rtype: generator
+        :returns: Generates a list of :py:class:`MarketItemsInRegionList`
+            instances, which contain :py:class:`MarketOrder` instances.
+        """
+        for olist in self._orders.values():
+            yield olist
 
     def add_order(self, order):
         """

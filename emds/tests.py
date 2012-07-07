@@ -3,7 +3,7 @@ Unit tests for the data structures and other top-level modules.
 """
 import unittest
 import datetime
-from emds.data_structures import MarketOrder, MarketOrderList, MarketHistoryList, MarketHistoryEntry
+from emds.data_structures import MarketOrder, MarketOrderList, MarketHistoryList, MarketHistoryEntry, MarketItemsInRegionList
 
 class MarketOrderListTestCase(unittest.TestCase):
 
@@ -68,6 +68,11 @@ class MarketOrderListTestCase(unittest.TestCase):
             generated_at=datetime.datetime.utcnow()
         ))
         self.assertEqual(3, len(order_list))
+
+        # Make sure that iterating over a MarketOrderList returns the correct
+        # instance type.
+        for olist in order_list:
+            self.assertIsInstance(olist, MarketItemsInRegionList)
 
     def test_contains(self):
         """
