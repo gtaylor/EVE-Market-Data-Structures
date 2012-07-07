@@ -26,7 +26,8 @@ Documentation
    :maxdepth: 2
 
    installation
-   market_orders
+   quickstart
+   formats
    data_structures
 
 Indices and tables
