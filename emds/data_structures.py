@@ -9,7 +9,7 @@ from emds.common_utils import check_for_naive_dtime
 class MarketOrderList(object):
     """
     A list of MarketOrder objects, with some added features for assisting
-    with serializing to the Unified Uploader Interchange format.
+    with serializing to the Unified Uploader Data Interchange format.
 
     :attr list_type: This may be used in your logic to separate orders from history.
     """

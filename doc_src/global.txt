@@ -3,7 +3,7 @@
 .. _mailing list: https://groups.google.com/forum/#!forum/eve-emdr
 
 .. _EMDR: http://www.eve-emdr.com/
-.. _Unified Uploader Interchange Format: http://dev.eve-central.com/unifieduploader/start
+.. _Unified Uploader Data Interchange Format: http://dev.eve-central.com/unifieduploader/start
 
 .. _Python: http://python.org
 .. _nose: http://somethingaboutorange.com/mrl/projects/nose/

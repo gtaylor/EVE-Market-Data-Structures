@@ -9,12 +9,12 @@ EVE Market Data Structures
 This project contains a set of data structures used to represent EVE Market
 data. Also included are a set of serializers and de-serializers, dealing with
 the common market formats. Currently, this is just
-Unified Uploader Interchange Format.
+Unified Uploader Data Interchange Format (UUDIF).
 
 Documentation
 -------------
 
-Forthcoming.
+Documentation is located at http://eve-market-data-structures.readthedocs.org/
 
 License
 -------
