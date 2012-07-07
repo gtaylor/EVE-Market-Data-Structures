@@ -3,9 +3,9 @@ import pytz
 from emds.compat import json
 from emds.data_structures import MarketOrderList, MarketHistoryList
 from emds.formats import unified
-from emds.formats.common_utils import enlighten_dtime, UTC_TZINFO, parse_datetime
+from emds.common_utils import enlighten_dtime, UTC_TZINFO
 from emds.formats.tests import BaseSerializationCase
-from emds.formats.unified.unified_utils import gen_iso_datetime_str
+from emds.formats.unified.unified_utils import gen_iso_datetime_str, parse_datetime
 
 class UtilsTests(BaseSerializationCase):
     """

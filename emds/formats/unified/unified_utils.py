@@ -2,7 +2,10 @@
 Assorted utility functions for order and history serializing and
 de-serializing.
 """
-from emds.formats.common_utils import UTC_TZINFO
+from exceptions import ValueError
+import dateutil.parser
+from emds.common_utils import UTC_TZINFO
+from emds.formats.exceptions import ParseError
 
 def _columns_to_kwargs(conversion_table, columns, row):
     """
@@ -39,3 +42,21 @@ def gen_iso_datetime_str(dtime):
     :returns: An ISO/Unified Uploader formatted datetime string.
     """
     return dtime.replace(microsecond=0).astimezone(UTC_TZINFO).isoformat()
+
+def parse_datetime(time_str):
+    """
+    Wraps dateutil's parser function to set an explicit UTC timezone, and
+    to make sure microseconds are 0. Unified Uploader format and EMK format
+    bother don't use microseconds at all.
+
+    :param str time_str: The date/time str to parse.
+    :rtype: datetime.datetime
+    :returns: A parsed, UTC datetime.
+    """
+    try:
+        return dateutil.parser.parse(
+            time_str
+        ).replace(microsecond=0).astimezone(UTC_TZINFO)
+    except ValueError:
+        # This was some kind of unrecognizable time string.
+        raise ParseError("Invalid time string: %s" % time_str)

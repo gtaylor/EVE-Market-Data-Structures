@@ -5,7 +5,7 @@ import unittest
 import datetime
 from emds.data_structures import MarketOrder, MarketOrderList, MarketHistoryList, MarketHistoryEntry, MarketItemsInRegionList, HistoryItemsInRegionList
 from emds.exceptions import NaiveDatetimeError
-from emds.formats.common_utils import now_dtime_in_utc
+from emds.common_utils import now_dtime_in_utc
 
 class MarketOrderListTestCase(unittest.TestCase):
 

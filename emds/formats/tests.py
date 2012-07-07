@@ -5,7 +5,8 @@ deserialization tests.
 """
 import unittest
 from emds.data_structures import MarketOrder, MarketOrderList, MarketHistoryList, MarketHistoryEntry
-from emds.formats.common_utils import parse_datetime, UTC_TZINFO, now_dtime_in_utc
+from emds.common_utils import  UTC_TZINFO, now_dtime_in_utc
+from emds.formats.unified.unified_utils import parse_datetime
 
 class CommonUtilsCase(unittest.TestCase):
     """

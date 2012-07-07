@@ -2,10 +2,9 @@
 Parser for the Unified uploader format orders.
 """
 import logging
-import datetime
 from emds.compat import json
-from emds.formats.common_utils import parse_datetime, now_dtime_in_utc
-from emds.formats.unified.unified_utils import _columns_to_kwargs, gen_iso_datetime_str
+from emds.common_utils import  now_dtime_in_utc
+from emds.formats.unified.unified_utils import _columns_to_kwargs, gen_iso_datetime_str, parse_datetime
 from emds.data_structures import MarketOrder, MarketOrderList
 
 logger = logging.getLogger(__name__)

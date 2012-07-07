@@ -4,7 +4,7 @@ Data structures for representing market data.
 import datetime
 from string import Template
 from emds.exceptions import ItemAlreadyPresentError
-from emds.formats.common_utils import check_for_naive_dtime
+from emds.common_utils import check_for_naive_dtime
 
 class MarketOrderList(object):
     """
