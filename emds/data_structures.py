@@ -202,7 +202,7 @@ class MarketItemsInRegionList(object):
         self.type_id = int(type_id)
         if not isinstance(generated_at, datetime.datetime):
             raise TypeError('generated_at should be a datetime.')
-        self.generated_at = generated_at
+        self.generated_at = enlighten_dtime(generated_at)
         self.orders = []
 
     def __len__(self):
@@ -541,7 +541,7 @@ class HistoryItemsInRegionList(object):
         self.type_id = int(type_id)
         if not isinstance(generated_at, datetime.datetime):
             raise TypeError('generated_at should be a datetime.')
-        self.generated_at = generated_at
+        self.generated_at = enlighten_dtime(generated_at)
         self.entries = []
 
     def __iter__(self):
