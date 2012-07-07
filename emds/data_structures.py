@@ -4,7 +4,7 @@ Data structures for representing market data.
 import datetime
 from string import Template
 from emds.exceptions import ItemAlreadyPresentError
-from emds.formats.common_utils import enlighten_dtime
+from emds.formats.common_utils import check_for_naive_dtime
 
 class MarketOrderList(object):
     """
@@ -202,7 +202,7 @@ class MarketItemsInRegionList(object):
         self.type_id = int(type_id)
         if not isinstance(generated_at, datetime.datetime):
             raise TypeError('generated_at should be a datetime.')
-        self.generated_at = enlighten_dtime(generated_at)
+        self.generated_at = check_for_naive_dtime(generated_at)
         self.orders = []
 
     def __len__(self):
@@ -304,12 +304,12 @@ class MarketOrder(object):
         self.minimum_volume = int(minimum_volume)
         if not isinstance(order_issue_date, datetime.datetime):
             raise TypeError('order_issue_date should be a datetime.')
-        self.order_issue_date = enlighten_dtime(order_issue_date)
+        self.order_issue_date = check_for_naive_dtime(order_issue_date)
         self.order_duration = int(order_duration)
         self.order_range = int(order_range)
         if not isinstance(generated_at, datetime.datetime):
             raise TypeError('generated_at should be a datetime.')
-        self.generated_at = enlighten_dtime(generated_at)
+        self.generated_at = check_for_naive_dtime(generated_at)
 
     def __repr__(self):
         """
@@ -541,7 +541,7 @@ class HistoryItemsInRegionList(object):
         self.type_id = int(type_id)
         if not isinstance(generated_at, datetime.datetime):
             raise TypeError('generated_at should be a datetime.')
-        self.generated_at = enlighten_dtime(generated_at)
+        self.generated_at = check_for_naive_dtime(generated_at)
         self.entries = []
 
     def __iter__(self):
@@ -589,7 +589,7 @@ class MarketHistoryEntry(object):
             self.region_id = None
         if not isinstance(historical_date, datetime.datetime):
             raise TypeError('historical_date should be a datetime, not %s.' % type(historical_date))
-        self.historical_date = enlighten_dtime(historical_date)
+        self.historical_date = check_for_naive_dtime(historical_date)
         self.num_orders = int(num_orders)
         self.low_price = float(low_price)
         self.high_price = float(high_price)
@@ -597,7 +597,7 @@ class MarketHistoryEntry(object):
         self.total_quantity = int(total_quantity)
         if not isinstance(generated_at, datetime.datetime):
             raise TypeError('generated_at should be a datetime.')
-        self.generated_at = enlighten_dtime(generated_at)
+        self.generated_at = check_for_naive_dtime(generated_at)
 
     def __repr__(self):
         """

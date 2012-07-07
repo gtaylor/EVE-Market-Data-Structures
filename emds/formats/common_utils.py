@@ -4,6 +4,7 @@ Utilities that are generally useful across multiple parsers.
 import dateutil.parser
 import pytz
 import datetime
+from emds.exceptions import NaiveDatetimeError
 from emds.formats.exceptions import ParseError
 
 UTC_TZINFO = pytz.timezone("UTC")
@@ -47,5 +48,23 @@ def enlighten_dtime(dtime):
     """
     if not dtime.tzinfo:
         return dtime.replace(tzinfo=UTC_TZINFO)
+    else:
+        return dtime
+
+def check_for_naive_dtime(dtime):
+    """
+    Given a datetime.datetime instance, check to see if it is naive. If it is
+    raise an exception. If not, return the datetime instance untouched.
+
+    :rtype: datetime.datetime
+    :returns: The datetime.datetime instance that was passed, unmodified.
+    :raises: :py:exc:`emds.exceptions.NaiveDatetimeError` if the datetime
+        instance is naive.
+    """
+    if not dtime.tzinfo:
+        raise NaiveDatetimeError(
+            "Naive datetime.datetime encountered, when a timezone aware one "
+            "is required (replace tzinfo on the datetime)."
+        )
     else:
         return dtime

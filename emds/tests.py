@@ -3,9 +3,63 @@ Unit tests for the data structures and other top-level modules.
 """
 import unittest
 import datetime
-from emds.data_structures import MarketOrder, MarketOrderList, MarketHistoryList, MarketHistoryEntry, MarketItemsInRegionList
+from emds.data_structures import MarketOrder, MarketOrderList, MarketHistoryList, MarketHistoryEntry, MarketItemsInRegionList, HistoryItemsInRegionList
+from emds.exceptions import NaiveDatetimeError
+from emds.formats.common_utils import now_dtime_in_utc
 
 class MarketOrderListTestCase(unittest.TestCase):
+
+    def test_naive_datetime(self):
+        """
+        Feeds naive datetimes to the various objects to make sure that
+        they are rejected.
+        """
+        # Passed naive order_issue_date.
+        self.assertRaises(NaiveDatetimeError,
+            MarketOrder,
+                order_id=2413387906,
+                is_bid=True,
+                region_id=10000068,
+                solar_system_id=30005316,
+                station_id=60011521,
+                type_id=10000068,
+                price=52875,
+                volume_entered=10,
+                volume_remaining=4,
+                minimum_volume=1,
+                order_issue_date=datetime.datetime.now(),
+                order_duration=90,
+                order_range=5,
+                generated_at=now_dtime_in_utc()
+        )
+
+        # Passed naive generated_at.
+        self.assertRaises(NaiveDatetimeError,
+            MarketOrder,
+                order_id=2413387906,
+                is_bid=True,
+                region_id=10000068,
+                solar_system_id=30005316,
+                station_id=60011521,
+                type_id=10000068,
+                price=52875,
+                volume_entered=10,
+                volume_remaining=4,
+                minimum_volume=1,
+                order_issue_date=now_dtime_in_utc(),
+                order_duration=90,
+                order_range=5,
+                generated_at=datetime.datetime.now(),
+        )
+
+        # Passed naive generated_at.
+        self.assertRaises(NaiveDatetimeError,
+            MarketItemsInRegionList,
+                region_id=10000068,
+                type_id=10000068,
+                generated_at=datetime.datetime.now(),
+        )
+
 
     def test_order_counting(self):
         """
@@ -25,10 +79,10 @@ class MarketOrderListTestCase(unittest.TestCase):
             volume_entered=10,
             volume_remaining=4,
             minimum_volume=1,
-            order_issue_date=datetime.datetime.utcnow(),
+            order_issue_date=now_dtime_in_utc(),
             order_duration=90,
             order_range=5,
-            generated_at=datetime.datetime.utcnow()
+            generated_at=now_dtime_in_utc()
         ))
         # Added one order.
         self.assertEqual(1, len(order_list))
@@ -44,10 +98,10 @@ class MarketOrderListTestCase(unittest.TestCase):
             volume_entered=10,
             volume_remaining=4,
             minimum_volume=1,
-            order_issue_date=datetime.datetime.utcnow(),
+            order_issue_date=now_dtime_in_utc(),
             order_duration=90,
             order_range=5,
-            generated_at=datetime.datetime.utcnow()
+            generated_at=now_dtime_in_utc()
         ))
         self.assertEqual(2, len(order_list))
         # Adding an item to a different region.
@@ -62,10 +116,10 @@ class MarketOrderListTestCase(unittest.TestCase):
             volume_entered=10,
             volume_remaining=4,
             minimum_volume=1,
-            order_issue_date=datetime.datetime.utcnow(),
+            order_issue_date=now_dtime_in_utc(),
             order_duration=90,
             order_range=5,
-            generated_at=datetime.datetime.utcnow()
+            generated_at=now_dtime_in_utc()
         ))
         self.assertEqual(3, len(order_list))
 
@@ -95,10 +149,10 @@ class MarketOrderListTestCase(unittest.TestCase):
             volume_entered=10,
             volume_remaining=4,
             minimum_volume=1,
-            order_issue_date=datetime.datetime.utcnow(),
+            order_issue_date=now_dtime_in_utc(),
             order_duration=90,
             order_range=5,
-            generated_at=datetime.datetime.utcnow()
+            generated_at=now_dtime_in_utc()
         )
         # Add an order to search for.
         order_list.add_order(new_order)
@@ -108,6 +162,47 @@ class MarketOrderListTestCase(unittest.TestCase):
         self.assertTrue(new_order in order_list)
 
 class MarketHistoryListTestCase(unittest.TestCase):
+
+    def test_naive_datetime(self):
+        """
+        Feeds naive datetimes to the various objects to make sure that
+        they are rejected.
+        """
+        # Passed naive historical_date.
+        self.assertRaises(NaiveDatetimeError,
+            MarketHistoryEntry,
+                type_id=2413387906,
+                region_id=10000068,
+                historical_date=datetime.datetime.now(),
+                num_orders=5,
+                low_price=5.0,
+                high_price=10.5,
+                average_price=7.0,
+                total_quantity=200,
+                generated_at=now_dtime_in_utc(),
+        )
+
+        # Passed naive generated_at.
+        self.assertRaises(NaiveDatetimeError,
+            MarketHistoryEntry,
+                type_id=2413387906,
+                region_id=10000068,
+                historical_date=now_dtime_in_utc(),
+                num_orders=5,
+                low_price=5.0,
+                high_price=10.5,
+                average_price=7.0,
+                total_quantity=200,
+                generated_at=datetime.datetime.now(),
+        )
+
+        # Passed naive generated_at.
+        self.assertRaises(NaiveDatetimeError,
+            HistoryItemsInRegionList,
+                region_id=10000068,
+                type_id=10000068,
+                generated_at=datetime.datetime.now(),
+            )
 
     def test_entry_counting(self):
         """
@@ -119,13 +214,13 @@ class MarketHistoryListTestCase(unittest.TestCase):
         history_list.add_entry(MarketHistoryEntry(
             type_id=2413387906,
             region_id=10000068,
-            historical_date=datetime.datetime.utcnow(),
+            historical_date=now_dtime_in_utc(),
             num_orders=5,
             low_price=5.0,
             high_price=10.5,
             average_price=7.0,
             total_quantity=200,
-            generated_at=datetime.datetime.utcnow(),
+            generated_at=now_dtime_in_utc(),
         ))
         # Just added one.
         self.assertEqual(1, len(history_list))
@@ -133,26 +228,26 @@ class MarketHistoryListTestCase(unittest.TestCase):
         history_list.add_entry(MarketHistoryEntry(
             type_id=2413387905,
             region_id=10000068,
-            historical_date=datetime.datetime.utcnow(),
+            historical_date=now_dtime_in_utc(),
             num_orders=5,
             low_price=5.0,
             high_price=10.5,
             average_price=7.0,
             total_quantity=200,
-            generated_at=datetime.datetime.utcnow(),
+            generated_at=now_dtime_in_utc(),
         ))
         self.assertEqual(2, len(history_list))
         # Adding to another region.
         history_list.add_entry(MarketHistoryEntry(
             type_id=2413387905,
             region_id=10000067,
-            historical_date=datetime.datetime.utcnow(),
+            historical_date=now_dtime_in_utc(),
             num_orders=5,
             low_price=5.0,
             high_price=10.5,
             average_price=7.0,
             total_quantity=200,
-            generated_at=datetime.datetime.utcnow(),
+            generated_at=now_dtime_in_utc(),
         ))
         # There are now three total.
         self.assertEqual(3, len(history_list))
@@ -170,13 +265,13 @@ class MarketHistoryListTestCase(unittest.TestCase):
         new_history = MarketHistoryEntry(
             type_id=2413387906,
             region_id=10000068,
-            historical_date=datetime.datetime.utcnow(),
+            historical_date=now_dtime_in_utc(),
             num_orders=5,
             low_price=5.0,
             high_price=10.5,
             average_price=7.0,
             total_quantity=200,
-            generated_at=datetime.datetime.utcnow(),
+            generated_at=now_dtime_in_utc(),
         )
         history_list.add_entry(new_history)
         # The entry was added, so this should succeed.
@@ -196,13 +291,13 @@ class MarketHistoryListTestCase(unittest.TestCase):
         history_list.add_entry(MarketHistoryEntry(
             type_id=2413387906,
             region_id=10000068,
-            historical_date=datetime.datetime.utcnow(),
+            historical_date=now_dtime_in_utc(),
             num_orders=5,
             low_price=5.0,
             high_price=10.5,
             average_price=7.0,
             total_quantity=200,
-            generated_at=datetime.datetime.utcnow(),
+            generated_at=now_dtime_in_utc(),
         ))
         # Just added one.
         self.assertEqual(1, len(history_list))
@@ -210,26 +305,26 @@ class MarketHistoryListTestCase(unittest.TestCase):
         history_list.add_entry(MarketHistoryEntry(
             type_id=2413387905,
             region_id=10000068,
-            historical_date=datetime.datetime.utcnow(),
+            historical_date=now_dtime_in_utc(),
             num_orders=5,
             low_price=5.0,
             high_price=10.5,
             average_price=7.0,
             total_quantity=200,
-            generated_at=datetime.datetime.utcnow(),
+            generated_at=now_dtime_in_utc(),
         ))
         self.assertEqual(2, len(history_list))
         # Adding to another region.
         history_list.add_entry(MarketHistoryEntry(
             type_id=2413387905,
             region_id=10000067,
-            historical_date=datetime.datetime.utcnow(),
+            historical_date=now_dtime_in_utc(),
             num_orders=5,
             low_price=5.0,
             high_price=10.5,
             average_price=7.0,
             total_quantity=200,
-            generated_at=datetime.datetime.utcnow(),
+            generated_at=now_dtime_in_utc(),
         ))
         # There are now three total.
         self.assertEqual(3, len(history_list))
@@ -247,13 +342,13 @@ class MarketHistoryListTestCase(unittest.TestCase):
         new_history = MarketHistoryEntry(
             type_id=2413387906,
             region_id=10000068,
-            historical_date=datetime.datetime.utcnow(),
+            historical_date=now_dtime_in_utc(),
             num_orders=5,
             low_price=5.0,
             high_price=10.5,
             average_price=7.0,
             total_quantity=200,
-            generated_at=datetime.datetime.utcnow(),
+            generated_at=now_dtime_in_utc(),
         )
         history_list.add_entry(new_history)
         # The entry was added, so this should succeed.

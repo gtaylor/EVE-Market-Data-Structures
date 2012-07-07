@@ -23,3 +23,11 @@ class ItemAlreadyPresentError(EMDSError):
     the item is already present in the region.
     """
     pass
+
+
+class NaiveDatetimeError(EMDSError):
+    """
+    Raised when a naive datetime.datetime object is encountered, where a
+    tzinfo aware one is required.
+    """
+    pass
