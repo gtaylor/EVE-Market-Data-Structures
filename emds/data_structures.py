@@ -415,7 +415,7 @@ class MarketHistoryList(object):
         else:
             type_id = int(item)
 
-        for entry in self:
+        for entry in self.get_all_entries_ungrouped():
             if entry.type_id == type_id:
                 return True
 
@@ -433,6 +433,36 @@ class MarketHistoryList(object):
                 list_repr += repr(entry)
 
         return list_repr
+
+    def get_all_entries_ungrouped(self):
+        """
+        Uses a generator to return all history entries within.
+        :py:class:`MarketHistoryEntry` objects are yielded directly, instead of
+        being grouped in :py:class:`HistoryItemsInRegion` instances.
+
+        .. note:: This is a generator!
+
+        :rtype: generator
+        :returns: Generates a list of :py:class:`MarketHistoryEntry` instances.
+        """
+        for entry_list in self._history.values():
+            for entry in entry_list:
+                yield entry
+
+    def get_all_entries_grouped(self):
+        """
+        Uses a generator to return all grouped Item+Region combos, in the form
+        of :py:class:`HistoryItemsInRegion` instances. This is useful in
+        that it is possible to express a lack of an item in a specific region.
+
+        .. note:: This is a generator!
+
+        :rtype: generator
+        :returns: Generates a list of :py:class:`HistoryItemsInRegion`
+            instances, which contain :py:class:`MarketHistoryEntry` instances.
+        """
+        for history_entry_list in self._history.values():
+            yield history_entry_list
 
     def add_entry(self, entry):
         """
