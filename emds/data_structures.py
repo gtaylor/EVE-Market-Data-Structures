@@ -3,6 +3,7 @@ Data structures for representing market data.
 """
 import datetime
 from string import Template
+from emds import __version__
 from emds.exceptions import ItemAlreadyPresentError
 from emds.common_utils import check_for_naive_dtime
 
@@ -20,23 +21,13 @@ class MarketOrderList(object):
                  *args, **kwargs):
         self._orders = {}
 
-        if not upload_keys:
-            self.upload_keys = [
-                {'name': 'EMDR', 'key': 'default'},
-            ]
-        else:
-            self.upload_keys = upload_keys
+        self.upload_keys = upload_keys or []
+        if not isinstance(self.upload_keys, list):
+            raise TypeError('upload_keys must be a list.')
 
-            if not isinstance(self.upload_keys, list):
-                raise TypeError('upload_keys must be a list.')
-
-        if not order_generator:
-            self.order_generator = {'name': 'Unknown', 'version': 'Unknown'}
-        else:
-            self.order_generator = order_generator
-
-            if not isinstance(order_generator, dict):
-                raise TypeError('order_generator must be a dict.')
+        self.order_generator = order_generator or {'name': 'EMDS', 'version': __version__}
+        if not isinstance(self.order_generator, dict):
+            raise TypeError('order_generator must be a dict.')
 
     def __iter__(self):
         """
@@ -361,23 +352,13 @@ class MarketHistoryList(object):
         # Will hold an organized store of history items.
         self._history = {}
 
-        if not upload_keys:
-            self.upload_keys = [
-                {'name': 'eve-market-data-relay', 'key': 'default'},
-            ]
-        else:
-            self.upload_keys = upload_keys
+        self.upload_keys = upload_keys or []
+        if not isinstance(self.upload_keys, list):
+            raise TypeError('upload_keys must be a list.')
 
-            if not isinstance(self.upload_keys, list):
-                raise TypeError('upload_keys must be a list.')
-
-        if not history_generator:
-            self.history_generator = {'name': 'Unknown', 'version': 'Unknown'}
-        else:
-            self.history_generator = history_generator
-
-            if not isinstance(history_generator, dict):
-                raise TypeError('history_generator must be a dict.')
+        self.history_generator = history_generator or {'name': 'EMDS', 'version': __version__}
+        if not isinstance(self.history_generator, dict):
+            raise TypeError('history_generator must be a dict.')
 
     def __len__(self):
         """

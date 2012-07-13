@@ -10,8 +10,6 @@ except ImportError:
         """
         return
 
-import emds
-
 required = [
     'python-dateutil<2.0',
     'pytz',
@@ -22,7 +20,7 @@ scripts = [
 
 setup(
     name='emds',
-    version=emds.__version__,
+    version='0.6',
     description='EVE Market Data Structures',
     long_description=open('README.rst').read(),
     author='Greg Taylor',
